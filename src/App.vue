@@ -29,12 +29,50 @@
       </Sider>
       <Layout>
         <Content>
-          <GridForm title="TEST FORM" :rule="form.rule" :model="form.model" />
+          <GridForm
+            title="TEST FORM"
+            :rule="form.rule"
+            :model="form.model"
+            @on-active="onActive"
+            @on-delete="onDelete"
+          />
         </Content>
 
-        <Sider width="266" hide-trigger>
+        <Sider width="288" hide-trigger>
           <div class="lcd-f-config-pane">
-            <h4 class="title">表单配置</h4>
+            <Tabs v-model="activeTabs">
+              <TabPane label="表单配置" name="formConfig">
+                <div class="lcd-f-config-base">
+                  <Divider class="config-title">基础配置</Divider>
+                  <Form :model="baseForm.model" label-position="top">
+                    <FormItem
+                      v-for="(base, index) in baseForm.rule"
+                      :key="index"
+                      :label="base.label"
+                      :prop="base.prop"
+                    >
+                      <RenderComponents v-bind="base" />
+                    </FormItem>
+                  </Form>
+                </div>
+                <div class="lcd-f-config-props">
+                  <Divider class="config-title">属性配置</Divider>
+                  <Form :model="propsForm.model" label-position="top">
+                    <FormItem
+                      v-for="(prop, index) in propsForm.rule"
+                      :key="index"
+                      :label="prop.label"
+                      :prop="prop.prop"
+                    >
+                      <RenderComponents v-bind="prop" />
+                    </FormItem>
+                  </Form>
+                </div>
+                <div class="lcd-f-config-validate">
+                  <Divider class="config-title">验证规则</Divider>
+                </div>
+              </TabPane>
+            </Tabs>
           </div>
         </Sider>
       </Layout>
@@ -49,16 +87,28 @@ import createMenu from "./config/menu";
 import GridForm from "./components/GridForm/index.vue";
 import { uniqueId } from "./utils";
 import ruleList from "./config/rule";
+import RenderComponents from "./components/RenderComponents.vue";
 
 export default {
   name: "App",
-  components: { draggable, GridForm },
+
+  components: { draggable, GridForm, RenderComponents },
+
   data() {
     return {
+      activeTabs: "formConfig",
       menuList: createMenu(),
       form: {
         model: {},
         rule: this.makeDragRule([]),
+      },
+      baseForm: {
+        model: {},
+        rule: [],
+      },
+      propsForm: {
+        model: {},
+        rule: [],
       },
     };
   },
@@ -67,10 +117,6 @@ export default {
 
   methods: {
     makeDragRule(children) {
-      //  add: (inject, evt) => this.dragAdd(children, evt),
-      //     end: (inject, evt) => this.dragEnd(children, evt),
-      //     start: (inject, evt) => this.dragStart(children, evt),
-      //     unchoose: (inject, evt) => this.dragUnchoose(children, evt),
       return [
         this.makeDrag(children, {
           add: (inject, evt) => this.dragAdd(children, evt),
@@ -137,6 +183,47 @@ export default {
         props: value.props(),
       });
     },
+
+    onActive(cpn) {
+      this.makeBaseRule(cpn.rule);
+      this.makePropRule(cpn.props);
+    },
+
+    onDelete() {
+      const result = { mode: {}, rule: [] };
+      this.baseForm = result;
+      this.propsForm = result;
+    },
+
+    makeBaseRule(rule) {
+      this.baseForm.model = { field: rule["field"], title: rule["title"] };
+      this.baseForm.rule = [
+        {
+          label: "字段ID",
+          prop: "field",
+          rule: {
+            title: "字段ID",
+            type: "input",
+            props: { value: rule["field"] },
+          },
+        },
+        {
+          label: "字段名称",
+          prop: "title",
+          rule: {
+            title: "字段名称",
+            type: "input",
+            props: { value: rule["title"] },
+          },
+        },
+      ];
+    },
+
+    makePropRule(rule) {
+      this.propsForm.rule = rule.map((item) => {
+        return { rule: item, label: item.title, prop: item.field };
+      });
+    },
   },
 };
 </script>
@@ -152,7 +239,6 @@ body,
 }
 
 .title {
-  padding: 10px;
   font-size: 18px;
   text-align: center;
   border-bottom: 1px solid #ddd;
@@ -204,8 +290,10 @@ body,
 }
 
 .lcd-f-config-pane {
+  padding: 5px 10px;
   height: 100vh;
   background-color: #fff;
+  box-sizing: border-box;
   overflow: auto;
 }
 </style>

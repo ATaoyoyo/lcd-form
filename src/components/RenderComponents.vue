@@ -1,4 +1,5 @@
 <script>
+import { upper } from "../utils";
 export default {
   name: "RenderComponents",
 
@@ -6,7 +7,8 @@ export default {
 
   render(h, context) {
     const { props } = context;
-    return h(props.rule.cpnName, {
+    const name = upper(props.rule.type);
+    return h(name, {
       props: { ...props.rule.props },
       on: context.listeners,
     });

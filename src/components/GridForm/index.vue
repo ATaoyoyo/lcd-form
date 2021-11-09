@@ -64,7 +64,6 @@ export default {
   data() {
     return {
       unique: "",
-      cpnList: [],
       draggList: [],
     };
   },
@@ -106,6 +105,7 @@ export default {
   methods: {
     onActive(cpn) {
       this.unique = cpn.field;
+      this.$emit("on-active", cpn);
     },
 
     onDragAdd() {},
@@ -114,7 +114,13 @@ export default {
 
     onDragChild() {},
 
-    onDragDelete() {},
+    onDragDelete(cpn) {
+      const index = this.draggList.findIndex(
+        (item) => item.field === cpn.field
+      );
+      this.draggList.splice(index, 1);
+      this.$emit("on-delete");
+    },
   },
 };
 </script>
