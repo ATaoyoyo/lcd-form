@@ -24,32 +24,19 @@ import tab from "./tab";
 import button from "./button";
 import editor from "./editor";
 
-const ruleList = {
-  [radio.name]: radio,
-  [checkbox.name]: checkbox,
-  [input.name]: input,
-  [number.name]: number,
-  [select.name]: select,
-  [_switch.name]: _switch,
-  [slider.name]: slider,
-  [time.name]: time,
-  [date.name]: date,
-  [rate.name]: rate,
-  [color.name]: color,
-  [row.name]: row,
-  [col.name]: col,
-  [tab.name]: tab,
-  [tabPane.name]: tabPane,
-  [divider.name]: divider,
-  [cascader.name]: cascader,
-  [upload.name]: upload,
-  [transfer.name]: transfer,
-  [tree.name]: tree,
-  [alert.name]: alert,
-  [span.name]: span,
-  [space.name]: space,
-  [button.name]: button,
-  [editor.name]: editor,
-};
+import table from "./table";
 
-export default ruleList;
+export default [
+  {
+    title: "表单组件",
+    list: [input, select, number, radio, date],
+  },
+  {
+    title: "表格组件",
+    list: [table],
+  },
+  {
+    title: "布局组件",
+    list: [row],
+  },
+];

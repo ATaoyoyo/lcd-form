@@ -28,7 +28,7 @@ export default {
   },
   props() {
     return [
-      makeOptionsRule("options"),
+      
       {
         type: "switch",
         field: "type",

@@ -1,0 +1,8 @@
+{
+  "model": {},
+  "schema": [
+    { "type": "input", "title": "输入框", "field": "input", "props": {} },
+    { "type": "select", "title": "选择框", "field": "select", "props": {} },
+    { "type": "inputNumber", "title": "数字输入框", "field": "inputNumber", "props": {} }
+  ]
+}

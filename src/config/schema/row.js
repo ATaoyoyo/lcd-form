@@ -7,12 +7,11 @@ export default {
   name,
   rule() {
     return {
-      type: "FcRow",
+      type: "row",
       props: {},
-      children: [],
+       children: [],
     };
   },
-  children: "col",
   props() {
     return [
       { type: "inputNumber", field: "gutter", title: "栅格间隔" },

@@ -1,299 +1,83 @@
 <template>
   <div id="app">
-    <Layout>
-      <Sider width="266">
-        <div class="lcd-f-container">
-          <div class="lcd-f-pane" v-for="menu in menuList" :key="menu.id">
-            <h4 class="lcd-f-pane-title">{{ menu.title }}</h4>
-
-            <draggable
-              class="lcd-f-pane-container"
-              :group="{ name: 'default', pull: 'clone', put: false }"
-              :sort="false"
-              :list="menu.list"
-              :clone="onClone"
-            >
-              <div
-                class="lcd-dragge-item"
-                v-for="menuItem in menu.list"
-                :key="menuItem.key"
-              >
-                <div class="lcd-icon-box">
-                  <i :class="['lcd-icon', menuItem.icon]" />
-                </div>
-                <div class="lcd-label">{{ menuItem.label }}</div>
-              </div>
-            </draggable>
-          </div>
-        </div>
-      </Sider>
-      <Layout>
-        <Content>
-          <GridForm
-            title="TEST FORM"
-            :rule="form.rule"
-            :model="form.model"
-            @on-active="onActive"
-            @on-delete="onDelete"
-          />
-        </Content>
-
-        <Sider width="288" hide-trigger>
-          <div class="lcd-f-config-pane">
-            <Tabs v-model="activeTabs">
-              <TabPane label="表单配置" name="formConfig">
-                <div class="lcd-f-config-base">
-                  <Divider class="config-title">基础配置</Divider>
-                  <Form :model="baseForm.model" label-position="top">
-                    <FormItem
-                      v-for="(base, index) in baseForm.rule"
-                      :key="index"
-                      :label="base.label"
-                      :prop="base.prop"
-                    >
-                      <RenderComponents v-bind="base" />
-                    </FormItem>
-                  </Form>
-                </div>
-                <div class="lcd-f-config-props">
-                  <Divider class="config-title">属性配置</Divider>
-                  <Form :model="propsForm.model" label-position="top">
-                    <FormItem
-                      v-for="(prop, index) in propsForm.rule"
-                      :key="index"
-                      :label="prop.label"
-                      :prop="prop.prop"
-                    >
-                      <RenderComponents v-bind="prop" />
-                    </FormItem>
-                  </Form>
-                </div>
-                <div class="lcd-f-config-validate">
-                  <Divider class="config-title">验证规则</Divider>
-                </div>
-              </TabPane>
-            </Tabs>
-          </div>
-        </Sider>
-      </Layout>
-    </Layout>
+    <Edit v-model="data" @change="onChange" />
   </div>
 </template>
 
 <script>
-import draggable from "vuedraggable";
-
-import createMenu from "./config/menu";
-import GridForm from "./components/GridForm/index.vue";
-import { uniqueId } from "./utils";
-import ruleList from "./config/rule";
-import RenderComponents from "./components/RenderComponents.vue";
+import Edit from './packages/Edit.vue'
+import data from '@/data'
 
 export default {
-  name: "App",
+  name: 'App',
 
-  components: { draggable, GridForm, RenderComponents },
+  provide: {},
 
+  components: { Edit },
+
+  filters: {},
+
+  props: {},
+
+  // 定义属性
   data() {
     return {
-      activeTabs: "formConfig",
-      menuList: createMenu(),
-      form: {
-        model: {},
-        rule: this.makeDragRule([]),
-      },
-      baseForm: {
-        model: {},
-        rule: [],
-      },
-      propsForm: {
-        model: {},
-        rule: [],
-      },
-    };
+      data: data,
+    }
   },
 
+  // 计算属性，会监听依赖属性值随之变化
+  computed: {},
+
+  // 监控data中的数据变化
+  watch: {},
+
+  // 生命周期 - 创建完成（可以访问当前this实例）
+  created() {},
+
+  // 生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
 
+  // 生命周期 - 创建之前
+  beforeCreate() {},
+
+  // 生命周期 - 挂载之前
+  beforeMount() {},
+
+  // 生命周期 - 更新之前
+  beforeUpdate() {},
+
+  // 生命周期 - 更新之后
+  updated() {},
+
+  // 生命周期 - 销毁之前
+  beforeDestroy() {},
+
+  // 生命周期 - 销毁完成
+  destroyed() {},
+
+  // 如果页面有keep-alive缓存功能，这个函数会触发
+  activated() {},
+
+  // 方法集合
   methods: {
-    makeDragRule(children) {
-      return [
-        this.makeDrag(children, {
-          add: (inject, evt) => this.dragAdd(children, evt),
-          end: (inject, evt) => this.dragEnd(children, evt),
-          start: (inject, evt) => this.dragStart(children, evt),
-          unchoose: (inject, evt) => this.dragUnchoose(children, evt),
-        }),
-      ];
-    },
-
-    makeDrag(children, on) {
-      return {
-        id: uniqueId(),
-        props: {
-          tag: "Col",
-          direction: "vertical",
-          ghostClass: "ghost",
-          group: "default",
-          animation: 150,
-          emptyInsertThreshold: 0,
-          list: children,
-        },
-        on,
-        children,
-      };
-    },
-
-    makeRule() {},
-
-    dragAdd(children, evt) {
-      console.log(children, evt);
-      const newIndex = evt.newIndex;
-      const menu = evt.item._underlying_vm_;
-      if (!menu) {
-        if (this.addRule) {
-          const rule = this.addRule.children.splice(this.addRule.oldIndex, 1);
-          children.splice(newIndex, 0, rule[0]);
-        }
-      } else {
-        const rule = this.makeRule(ruleList[menu.name]);
-        children.splice(newIndex, 0, rule);
-      }
-      this.added = true;
-    },
-
-    dragEnd(children, evt) {
-      console.log(children, evt);
-    },
-
-    dragStart(children, evt) {
-      console.log(children, evt);
-    },
-
-    dragUnchoose(children, evt) {
-      console.log(children, evt);
-    },
-
-    onClone(value) {
-      // vuedraggable clone模式下，两边数据引用的是同一个地址，后续使用里面的数据会用莫名其妙的bug
-      const data = JSON.parse(JSON.stringify(value));
-      return Object.assign(data, {
-        field: uniqueId(),
-        rule: value.rule(),
-        props: value.props(),
-      });
-    },
-
-    onActive(cpn) {
-      this.makeBaseRule(cpn.rule);
-      this.makePropRule(cpn.props);
-    },
-
-    onDelete() {
-      const result = { mode: {}, rule: [] };
-      this.baseForm = result;
-      this.propsForm = result;
-    },
-
-    makeBaseRule(rule) {
-      this.baseForm.model = { field: rule["field"], title: rule["title"] };
-      this.baseForm.rule = [
-        {
-          label: "字段ID",
-          prop: "field",
-          rule: {
-            title: "字段ID",
-            type: "input",
-            props: { value: rule["field"] },
-          },
-        },
-        {
-          label: "字段名称",
-          prop: "title",
-          rule: {
-            title: "字段名称",
-            type: "input",
-            props: { value: rule["title"] },
-          },
-        },
-      ];
-    },
-
-    makePropRule(rule) {
-      this.propsForm.rule = rule.map((item) => {
-        return { rule: item, label: item.title, prop: item.field };
-      });
+    onChange() {
+      console.log('onChange')
     },
   },
-};
+}
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 html,
 body,
-#app,
-.ivu-layout {
-  width: 100%;
+#app {
+  width: 100vw;
   height: 100vh;
-  font-weight: normal;
-}
+  overflow: hidden;
 
-.title {
-  font-size: 18px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.lcd-f-container {
-  max-height: 100vh;
-  overflow: auto;
-
-  .lcd-f-pane {
-    background-color: #fff;
-
-    &-title {
-      padding: 5px 10px;
-      font-size: 16px;
-    }
-
-    &-container {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 2px 15px;
-      width: 100%;
-
-      .lcd-dragge-item {
-        padding: 10px 5px;
-        width: calc((100%- 25) / 3);
-        height: 65px;
-        font-size: 12px;
-        text-align: center;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover {
-          color: #fff;
-          background-color: rgb(40, 95, 212);
-          transition: all 0.3s;
-        }
-
-        .lcd-icon-box {
-          .lcd-icon {
-            font-size: 14px;
-            margin-right: 2px;
-          }
-        }
-      }
-    }
+  .lcd-form-label {
+    margin-bottom: 0;
   }
-}
-
-.lcd-f-config-pane {
-  padding: 5px 10px;
-  height: 100vh;
-  background-color: #fff;
-  box-sizing: border-box;
-  overflow: auto;
 }
 </style>
