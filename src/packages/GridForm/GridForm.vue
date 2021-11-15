@@ -104,7 +104,7 @@ export default {
   // }
 
   .ivu-form-item {
-    margin-bottom: 5px;
+    margin: 5px 0 5px 0;
   }
 
   &__project-code {

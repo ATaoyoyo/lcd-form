@@ -1,7 +1,9 @@
 <template>
   <div class="grid-form-item">
-    <p v-if="schema.category" class="grid-form-item__category-title">{{ schema.category }}</p>
-    <Row class-name="grid-form-item__category-content" type="flex">
+    <p v-if="schema.category" class="grid-form-item__category-title">
+      {{ schema.category }}
+    </p>
+    <Row class-name="grid-form-item__category-content">
       <i-col
         v-for="item in schema.children"
         :class="[item.children ? '' : 'grid-form-item__col_bottom']"
@@ -12,11 +14,18 @@
           <div class="grid-form-item__classification">
             <div
               class="grid-form-item__classification-title"
-              :style="{ width: item['title-width'] ? `${item['title-width']}px` : '150px' }"
+              :style="{
+                width: item['title-width']
+                  ? `${item['title-width']}px`
+                  : '150px',
+              }"
             >
               <p>{{ item.title }}</p>
             </div>
-            <Row class-name="grid-form-item__classification-content" type="flex">
+            <Row
+              class-name="grid-form-item__classification-content"
+              type="flex"
+            >
               <i-col
                 v-for="item in item.children"
                 :class="[item.children ? '' : 'grid-form-item__col_bottom']"
@@ -27,25 +36,42 @@
                   <div class="grid-form-item__classification">
                     <div
                       class="grid-form-item__classification-title"
-                      :style="{ width: item['title-width'] ? `${item['title-width']}px` : '150px' }"
+                      :style="{
+                        width: item['title-width']
+                          ? `${item['title-width']}px`
+                          : '150px',
+                      }"
                     >
                       <p>{{ item.title }}</p>
                     </div>
-                    <Row class-name="grid-form-item__classification-content" type="flex">
+                    <Row
+                      class-name="grid-form-item__classification-content"
+                      type="flex"
+                    >
                       <i-col
                         v-for="item in item.children"
                         :class="['grid-form-item__col_bottom']"
                         :span="item.span"
                         :key="item.field"
                       >
-                        <FormItem :model="model" :schema="item" :preview="preview" @on-annex-delete="onAnnexDelete" />
+                        <FormItem
+                          :model="model"
+                          :schema="item"
+                          :preview="preview"
+                          @on-annex-delete="onAnnexDelete"
+                        />
                       </i-col>
                     </Row>
                   </div>
                 </template>
 
                 <template v-else>
-                  <FormItem :model="model" :schema="item" :preview="preview" @on-annex-delete="onAnnexDelete" />
+                  <FormItem
+                    :model="model"
+                    :schema="item"
+                    :preview="preview"
+                    @on-annex-delete="onAnnexDelete"
+                  />
                 </template>
               </i-col>
             </Row>
@@ -53,7 +79,12 @@
         </template>
 
         <template v-else>
-          <FormItem :model="model" :schema="item" :preview="preview" @on-annex-delete="onAnnexDelete" />
+          <FormItem
+            :model="model"
+            :schema="item"
+            :preview="preview"
+            @on-annex-delete="onAnnexDelete"
+          />
         </template>
       </i-col>
     </Row>
@@ -73,8 +104,8 @@ export default {
     model: Object,
     preview: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
@@ -100,8 +131,8 @@ export default {
   methods: {
     onAnnexDelete(params) {
       this.$emit('on-annex-delete', params)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -170,8 +201,10 @@ export default {
 
   &__col {
     &_bottom {
+      width: 100%;
       border-bottom: 1px solid #e2e2e2;
     }
+
     // &_right:nth-child(2) {
     //   border-right: none;
     // }

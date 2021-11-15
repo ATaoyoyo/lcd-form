@@ -3,11 +3,7 @@
     <Layout>
       <Sider width="266">
         <div class="lcd-left-aside">
-          <div
-            class="lcd-left-aside-content"
-            v-for="menu in menus"
-            :key="menu.title"
-          >
+          <div class="lcd-left-aside-content" v-for="menu in menus" :key="menu.title">
             <h3 class="title">{{ menu.title }}</h3>
 
             <div class="lcd-left-aside-content-item">
@@ -18,11 +14,7 @@
                 :list="menu.list"
                 :clone="onClone"
               >
-                <div
-                  class="draggable-schema"
-                  v-for="schema in menu.list"
-                  :key="schema.title"
-                >
+                <div class="draggable-schema" v-for="schema in menu.list" :key="schema.title">
                   <div class="lcd-draggable-icon">
                     <i class="lcd-icon" :class="schema.icon" />
                   </div>
@@ -72,10 +64,7 @@
                     @delete="onDelete(schema)"
                   >
                     <div class="lcd-form-item">
-                      <p
-                        class="lcd-form-label"
-                        v-if="schema.type !== 'formTable'"
-                      >
+                      <p class="lcd-form-label" v-if="schema.type !== 'formTable'">
                         <span>{{ schema.title }}</span>
                       </p>
                       <FormItem :prop="schema.prop">
@@ -121,7 +110,7 @@
                 </Form>
               </Form>
 
-              <Divider>验证规则</Divider>
+              <!--              <Divider>验证规则</Divider>-->
             </template>
 
             <div v-else class="lcd-right-aside-empty">
@@ -136,12 +125,12 @@
     </Layout>
 
     <Modal v-model="visible" title="表单预览" width="75%">
-      <GridForm :title="gridForm.formTitle" :model="gridForm.model">
+      <GridForm :title="gridForm.formTitle" :model="gridForm.formModel">
         <GridFormItem
-          v-for="(schema, index) in gridForm.schema"
+          v-for="(schema, index) in gridForm.formSchema"
           :key="index"
           :schema="schema"
-          :model="gridForm.model"
+          :model="gridForm.formModel"
         />
       </GridForm>
     </Modal>
@@ -189,13 +178,9 @@ export default {
 
   filters: {},
 
-  props: {
-    data: Object,
-  },
+  props: {},
 
-  model: {
-    prop: ['data'],
-  },
+  model: {},
 
   // 定义属性
   data() {
@@ -209,7 +194,7 @@ export default {
       visible: false,
       jsonVisible: false,
       gridFormJson: '{}',
-      gridForm: { formTitle: '', model: {}, schema: [] },
+      gridForm: { formTitle: '', formModel: {}, formSchema: [] },
     }
   },
 
@@ -253,16 +238,12 @@ export default {
       const data = JSON.parse(JSON.stringify(value))
       const schema = value.rule()
 
-      if (data.type === 'formTable') {
-        schema.model = { [schema.field]: schema.props.data }
-        schema.schema = { field: schema.field, columns: schema.props.columns }
-
-        return Object.assign(data, {
-          ...schema,
-          schema,
-          model: model,
-          configProps: value.props(),
-        })
+      if (schema.type === 'formTable') {
+        schema.props.model = { [schema.field]: schema.props.data }
+        schema.props.schema = {
+          field: schema.field,
+          columns: schema.props.columns,
+        }
       }
 
       return Object.assign(data, {
@@ -282,9 +263,7 @@ export default {
     },
 
     onDelete(schema) {
-      const index = this.wrapperForm.schema.findIndex(
-        ({ field }) => field === schema.field
-      )
+      const index = this.wrapperForm.schema.findIndex(({ field }) => field === schema.field)
       this.wrapperForm.schema.splice(index, 1)
       this.baseForm = {}
       this.propForm = {}
@@ -302,11 +281,8 @@ export default {
         return
       }
       const { field } = this.activeSchema
-      const index = this.wrapperForm.schema.findIndex(
-        (schema) => schema.field === field
-      )
-      if (index !== -1)
-        this.wrapperForm.schema.splice(index, 1, this.activeSchema)
+      const index = this.wrapperForm.schema.findIndex((schema) => schema.field === field)
+      if (index !== -1) this.wrapperForm.schema.splice(index, 1, this.activeSchema)
     },
 
     onRemove() {
@@ -322,11 +298,24 @@ export default {
     },
 
     onCreateJson(type = 'create') {
-      this.gridForm.model = {}
+      this.gridForm.formModel = {}
 
       const { schema } = this.wrapperForm
       const schemas = schema.map((item) => {
-        this.gridForm.model[item.field] = valueKeyMap[item.type] || ''
+        this.gridForm.formModel[item.field] = valueKeyMap[item.type] || ''
+
+        if (item.type === 'formTable') {
+          this.gridForm.formModel[item.field] = item.props.data
+          return {
+            label: item.title,
+            type: typeKeyMap[item.type] || item.type,
+            field: item.field,
+            props: { border: true },
+            columns: item.props.columns,
+            validate: item.validate || [],
+          }
+        }
+
         return {
           label: item.title,
           type: typeKeyMap[item.type] || item.type,
@@ -337,7 +326,7 @@ export default {
           validate: item.validate || [],
         }
       })
-      this.gridForm.schema = [{ category: '', children: schemas }]
+      this.gridForm.formSchema = [{ category: '', children: schemas }]
 
       this.gridFormJson = JSON.stringify(this.gridForm, null, 2)
 
@@ -349,12 +338,7 @@ export default {
     makeSchemaRule(schema) {
       this.baseForm.schema = [
         { type: 'input', title: '字段ID', field: 'field', value: schema.field },
-        {
-          type: 'input',
-          title: '字段名称',
-          field: 'name',
-          value: schema.title,
-        },
+        { type: 'input', title: '字段名称', field: 'name', value: schema.title },
       ]
       this.propForm.schema = schema.configProps
 

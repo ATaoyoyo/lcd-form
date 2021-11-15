@@ -1,14 +1,15 @@
 <template>
   <div class="grid-form-table">
-    <!-- <i-tag class="grid-form-plot__suffix">单位:{{ schema.suffix }}</i-tag> -->
-    <i-table
-      :class="['grid-form-table__table', preview ? '' : 'grid-form-table__table_medium']"
+    <Table
+      :class="[
+        'grid-form-table__table',
+        preview ? '' : 'grid-form-table__table_medium',
+      ]"
       :columns="columns"
       :data="model[schema.field]"
       v-bind="schema.props"
       :span-method="schema.spans && spanMethod"
-      :summary-method="schema.props.showSummary && summaryMethod"
-    ></i-table>
+    />
   </div>
 </template>
 
@@ -21,7 +22,7 @@ export default {
   props: {
     model: Object,
     schema: Object,
-    preview: Boolean
+    preview: Boolean,
   },
 
   data() {
@@ -35,7 +36,7 @@ export default {
       const _columns = this.generateColumns(columns, field, model)
 
       return Object.freeze(_columns)
-    }
+    },
   },
 
   watch: {},
@@ -54,7 +55,7 @@ export default {
 
   methods: {
     generateColumns(columns, field, model) {
-      const _columns = columns.map(column => {
+      return columns.map((column) => {
         const isCustomize = column.customize
         const isCustomizeHeader = column.customizeHeader
         const hasChild = column.children
@@ -64,7 +65,9 @@ export default {
         }
 
         if (isCustomize) {
-          column.render = this.preview ? null : this.getColumnRender(model, field, column)
+          column.render = this.preview
+            ? null
+            : this.getColumnRender(model, field, column)
         }
 
         if (isCustomizeHeader) {
@@ -74,28 +77,30 @@ export default {
         // delete column.customize
         return column
       })
-
-      return _columns
     },
 
     getColumnHeaderRender(column) {
       const { title, customizeHeader, customize } = column
-      const isRequired = customize && customize.validate && customize.validate.find(({ required }) => required === true)
+      const isRequired =
+        customize &&
+        customize.validate &&
+        customize.validate.find(({ required }) => required === true)
       const { align } = customizeHeader
-      const render = (h, { column, index }) => {
+      return (h, { column, index }) => {
         return isRequired
-          ? h('span', {}, [h('span', { style: { color: 'red', fontSize: '14px' } }, ' * '), h('span', {}, title)])
+          ? h('span', {}, [
+              h('span', { style: { color: 'red', fontSize: '14px' } }, ' * '),
+              h('span', {}, title),
+            ])
           : h('span', {}, title)
       }
-
-      return render
     },
 
     getColumnRender(model, field, column) {
       const { key, customize } = column
       const { type, props, validate, keys } = customize
       const _model = model[field]
-      const render = (h, { row, column, index }) => {
+      return (h, { row, column, index }) => {
         const { _type: dataType, _range: dataRange, _keys: dataKeys } = row
         let _row = _model[index]
         let temp = 0
@@ -106,50 +111,59 @@ export default {
               label: '',
               prop: `${field}.${index}.${key}`,
               rules: validate,
-              labelwidth: 0
-            }
+              labelwidth: 0,
+            },
           },
           dataType === 'sub-sum'
             ? [
                 h('p', [
                   (_row[key] = this.formatNumberAccuracy(
-                    dataRange.map(index => _model[index][key]).reduce((a, b) => a + b)
-                  ))
-                ])
+                    dataRange
+                      .map((index) => _model[index][key])
+                      .reduce((a, b) => a + b)
+                  )),
+                ]),
               ]
             : [
                 type === 'number'
                   ? h('InputNumber', {
                       props: { ...props, value: row[key] },
                       style: { width: '100%' },
-                      on: { input: val => (_row[key] = val) }
+                      on: { input: (val) => (_row[key] = val) },
                     })
                   : type === 'text'
                   ? h('Input', {
                       props: { ...props, value: row[key] },
-                      on: { input: val => (_row[key] = val.trim()) }
+                      on: { input: (val) => (_row[key] = val.trim()) },
                     })
                   : type === 'sum-number'
                   ? h('p', [
-                      (_row[key] = this.formatNumberAccuracy(keys.map(key => _row[key]).reduce((a, b) => a + b)))
+                      (_row[key] = this.formatNumberAccuracy(
+                        keys.map((key) => _row[key]).reduce((a, b) => a + b)
+                      )),
                     ])
                   : type === 'subtract-number'
                   ? h('p', [
-                      (_row[key] = this.formatNumberAccuracy(keys.map(key => _row[key]).reduce((a, b) => a - b)))
+                      (_row[key] = this.formatNumberAccuracy(
+                        keys.map((key) => _row[key]).reduce((a, b) => a - b)
+                      )),
                     ])
-                  : h('p')
+                  : h('p'),
               ]
         )
       }
-
-      return render
     },
 
     spanMethod({ row, column, rowIndex, columnIndex }) {
       const { spans } = this.schema
       if (spans.length) {
         for (let index = 0; index < spans.length; index++) {
-          const { rowIndex: _rowIndex, columnIndex: _columnIndex, rowspan, colspan } = spans[index]
+          const {
+            rowIndex: _rowIndex,
+            columnIndex: _columnIndex,
+            rowspan,
+            colspan,
+          } = spans[index]
           if (rowIndex === _rowIndex && columnIndex === _columnIndex) {
             return [rowspan, colspan]
           }
@@ -157,54 +171,17 @@ export default {
       }
     },
 
-    summaryMethod({ columns, data }) {
-      // const { suffix } = this.schema
-      const sums = {}
-      columns.forEach((column, index) => {
-        const key = column.key
-        if (index === 0) {
-          sums[key] = {
-            key,
-            value: '合计'
-          }
-          return
-        }
-        const values = data.filter(item => item._type !== 'sub-sum').map(item => Number(item[key]))
-        if (!values.every(value => isNaN(value))) {
-          const v = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          }, 0)
-          sums[key] = {
-            key,
-            value: this.formatNumberAccuracy(v)
-            // value: v + ' ' + suffix
-          }
-        } else {
-          sums[key] = {
-            key,
-            value: ''
-          }
-        }
-      })
-
-      return sums
-    },
-
     formatNumberAccuracy(number, length = 4) {
       return Number.isInteger(number) ? number : Number(number.toFixed(4))
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .grid-form-table {
   position: relative;
+  width: 100%;
 
   &__table {
     &_medium {
@@ -222,10 +199,6 @@ export default {
       height: 0;
     }
 
-    .ivu-form-item {
-      margin-bottom: 0;
-    }
-
     .ivu-table-header .header-border-right-none {
       border-right: none !important;
 
@@ -235,7 +208,6 @@ export default {
 
       .ivu-table-cell {
         padding-right: 0px;
-        // margin-right: -10px;
       }
     }
 

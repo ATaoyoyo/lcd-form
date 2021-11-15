@@ -1,12 +1,11 @@
 <template>
   <div id="app">
-    <Edit v-model="data" @change="onChange" />
+    <Edit />
   </div>
 </template>
 
 <script>
-import Edit from './packages/Edit.vue'
-import data from '@/data'
+import Edit from './packages/Edit'
 
 export default {
   name: 'App',
@@ -21,9 +20,7 @@ export default {
 
   // 定义属性
   data() {
-    return {
-      data: data,
-    }
+    return {}
   },
 
   // 计算属性，会监听依赖属性值随之变化
@@ -60,11 +57,7 @@ export default {
   activated() {},
 
   // 方法集合
-  methods: {
-    onChange() {
-      console.log('onChange')
-    },
-  },
+  methods: {},
 }
 </script>
 

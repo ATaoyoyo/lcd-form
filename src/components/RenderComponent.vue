@@ -12,8 +12,6 @@ export default {
   props: ['schema'],
 
   render(h, context) {
-    console.log(context)
-
     const { props, listeners } = context
 
     const { schema } = props
