@@ -1,4 +1,4 @@
-# lcd-form-v2
+# lcd-form
 
 ## Project setup
 ```
