@@ -1,138 +1,53 @@
 <template>
   <div class="lcd-edit">
-    <Layout>
-      <Sider width="266">
-        <div class="lcd-left-aside">
-          <div class="lcd-left-aside-content" v-for="menu in menus" :key="menu.title">
-            <h3 class="title">{{ menu.title }}</h3>
+    <DragLayout>
+      <template v-slot:left-aside>
+        <MenuAside :menus="menus" />
+      </template>
 
-            <div class="lcd-left-aside-content-item">
-              <draggable
-                class="lcd-draggable"
-                :group="{ name: 'default', pull: 'clone', put: false }"
-                :sort="false"
-                :list="menu.list"
-                :clone="onClone"
-              >
-                <div class="draggable-schema" v-for="schema in menu.list" :key="schema.title">
-                  <div class="lcd-draggable-icon">
-                    <i class="lcd-icon" :class="schema.icon" />
-                  </div>
-                  <div class="lcd-draggable-label">
-                    <span>{{ schema.label }}</span>
-                  </div>
-                </div>
-              </draggable>
-            </div>
-          </div>
-        </div>
-      </Sider>
-      <Layout>
-        <Content>
-          <Header>
-            <div class="lcd-header">
-              <div class="lcd-header-form-title">
-                <Input v-model="gridForm.formTitle" placeholder="请输入标题" />
-              </div>
-              <div class="lcd-header-opt">
-                <Button type="primary" @click="onCreateJson">生成JSON</Button>
-                <Button type="info" @click="onPreview">预览</Button>
-                <Button type="error" @click="onRemove">清空</Button>
-              </div>
-            </div>
-          </Header>
-          <div class="lcd-wrapper">
-            <Row style="display: block; height: 100%">
-              <Form>
-                <draggable
-                  class="lcd-draggable-wrapper"
-                  direction="vertical"
-                  ghostClass="ghost"
-                  group="default"
-                  tag="Col"
-                  handle=".lcd-dragg-tool-move"
-                  :animation="150"
-                  :emptyInsertThreshold="0"
-                  :list="wrapperForm.schema"
-                >
-                  <dragg-tool
-                    v-for="schema in wrapperForm.schema"
-                    :key="schema.field"
-                    :active="uniqueId === schema.field"
-                    @active="onChoose(schema)"
-                    @move="onMove(schema)"
-                    @delete="onDelete(schema)"
-                  >
-                    <div class="lcd-form-item">
-                      <p class="lcd-form-label" v-if="schema.type !== 'formTable'">
-                        <span>{{ schema.title }}</span>
-                      </p>
-                      <FormItem :prop="schema.prop">
-                        <render-component :schema="schema" />
-                      </FormItem>
-                    </div>
-                  </dragg-tool>
-                </draggable>
-              </Form>
-            </Row>
-          </div>
-        </Content>
-        <Sider width="266">
-          <div class="lcd-right-aside">
-            <div style="height: 44px; line-height: 44px">
-              <Button type="success" long @click="onRefresh">刷新配置</Button>
-            </div>
+      <template v-slot:header>
+        <DragHeader
+          :title="gridForm.formTitle"
+          @on-make-excel-json="onMakeExcelJson"
+          @on-create-json="onCreateJson"
+          @on-preview="onPreview"
+          @on-clean="onRemove"
+        />
+      </template>
 
-            <template v-if="activeSchema">
-              <Divider>基础配置</Divider>
-              <Form label-position="top">
-                <FormItem
-                  v-for="(prop, index) in baseForm.schema"
-                  :key="index"
-                  :label="prop.title"
-                  :prop="prop.field"
-                >
-                  <render-component :schema="prop" @change="onChange" />
-                </FormItem>
-              </Form>
+      <template v-slot:content>
+        <DragWrapper
+          :unique-id="uniqueId"
+          :wrapper-form="wrapperForm"
+          @on-choose="onChoose"
+          @on-delete="onDelete"
+        />
+      </template>
 
-              <Divider>属性配置</Divider>
-              <Form>
-                <Form label-position="top">
-                  <FormItem
-                    v-for="(prop, index) in propForm.schema"
-                    :key="index"
-                    :label="prop.title"
-                    :prop="prop.field"
-                  >
-                    <render-component :schema="prop" @change="onChange" />
-                  </FormItem>
-                </Form>
-              </Form>
-
-              <!--              <Divider>验证规则</Divider>-->
-            </template>
-
-            <div v-else class="lcd-right-aside-empty">
-              <div class="lcd-icon">
-                <Icon type="md-easel" />
-              </div>
-              <p>请选择一个组件进行配置</p>
-            </div>
-          </div>
-        </Sider>
-      </Layout>
-    </Layout>
+      <template v-slot:right-aside>
+        <ConfigAside
+          :base-form="baseForm"
+          :prop-form="propForm"
+          :active-schema="activeSchema"
+          @on-refresh="onRefresh"
+          @on-change="onChange"
+        />
+      </template>
+    </DragLayout>
 
     <Modal v-model="visible" title="表单预览" width="75%">
-      <GridForm :title="gridForm.formTitle" :model="gridForm.formModel">
-        <GridFormItem
-          v-for="(schema, index) in gridForm.formSchema"
-          :key="index"
-          :schema="schema"
-          :model="gridForm.formModel"
-        />
-      </GridForm>
+      <div class="preview-wrapper">
+        <div class="preview-wrapper-content">
+          <GridForm :title="gridForm.formTitle" :model="gridForm.formModel">
+            <GridFormItem
+              v-for="(schema, index) in gridForm.formSchema"
+              :key="index"
+              :schema="schema"
+              :model="gridForm.formModel"
+            />
+          </GridForm>
+        </div>
+      </div>
     </Modal>
 
     <Modal v-model="jsonVisible" title="表单JSON" width="75%">
@@ -149,15 +64,15 @@
 
 <script>
 import { GridForm, GridFormItem } from '@/packages/GridForm'
-import FormTable from '@/packages/GridForm/GridFormItem/GridFormTable'
-import RenderComponent from '@/components/RenderComponent.vue'
-import DraggTool from '@/components/DraggTool.vue'
-import Struct from '@/components/Struct'
+import MenuAside from '@/packages/Edit/MenuAside'
+import DragHeader from '@/packages/Edit/DragHeader'
+import DragLayout from '@/packages/Edit/DragLayout'
+import DragWrapper from '@/packages/Edit/DragWrapper'
+import ConfigAside from '@/packages/Edit/ConfigAside'
 
 import schema from '@/config/schema'
 import { typeKeyMap, valueKeyMap } from '@/config/keyMap'
 
-import draggable from 'vuedraggable'
 import MonacoEditor from 'vue-monaco'
 
 export default {
@@ -166,14 +81,14 @@ export default {
   provide: {},
 
   components: {
-    RenderComponent,
-    DraggTool,
+    ConfigAside,
+    DragWrapper,
+    DragLayout,
+    DragHeader,
+    MenuAside,
     GridForm,
     GridFormItem,
-    FormTable,
-    draggable,
     MonacoEditor,
-    Struct,
   },
 
   filters: {},
@@ -233,33 +148,9 @@ export default {
 
   // 方法集合
   methods: {
-    onClone(value) {
-      // vuedraggable clone模式下，两边数据引用的是同一个地址，后续使用里面的数据会用莫名其妙的bug
-      const data = JSON.parse(JSON.stringify(value))
-      const schema = value.rule()
-
-      if (schema.type === 'formTable') {
-        schema.props.model = { [schema.field]: schema.props.data }
-        schema.props.schema = {
-          field: schema.field,
-          columns: schema.props.columns,
-        }
-      }
-
-      return Object.assign(data, {
-        ...schema,
-        schema,
-        configProps: value.props(),
-      })
-    },
-
     onChoose(schema) {
       this.uniqueId = schema.field
       this.makeSchemaRule(schema)
-    },
-
-    onMove(schema) {
-      console.log(schema)
     },
 
     onDelete(schema) {
@@ -335,6 +226,11 @@ export default {
       this.jsonVisible = true
     },
 
+    onMakeExcelJson(formTableValue) {
+      this.gridForm = formTableValue
+      this.visible = true
+    },
+
     makeSchemaRule(schema) {
       this.baseForm.schema = [
         { type: 'input', title: '字段ID', field: 'field', value: schema.field },
@@ -381,59 +277,6 @@ export default {
   width: 100%;
   height: 100%;
 
-  .ivu-layout {
-    width: 100%;
-    height: 100%;
-  }
-
-  .ivu-layout-header {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    background: transparent;
-    box-sizing: border-box;
-  }
-
-  .lcd-left-aside {
-    height: 100%;
-    background: #fff;
-    overflow: auto;
-
-    .lcd-left-aside-content {
-      .title {
-        padding: 10px;
-      }
-
-      &-item {
-        padding: 0 10px;
-
-        .lcd-draggable {
-          .draggable-schema {
-            display: flex;
-            align-items: center;
-            height: 65px;
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s;
-
-            &:hover {
-              color: #fff;
-              background-color: rgb(40, 95, 212);
-            }
-
-            .lcd-draggable-icon {
-              margin: 0 20px 0 50px;
-
-              .lcd-icon {
-                font-size: 30px;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   .lcd-right-aside {
     padding: 10px;
     height: 100%;
@@ -456,25 +299,6 @@ export default {
 
       font-size: 18px;
       color: #999;
-    }
-  }
-
-  .lcd-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 10px;
-    width: 100%;
-    background-color: #fff;
-
-    &-form-title {
-      flex: 1;
-    }
-
-    &-opt {
-      button {
-        margin: 0 5px;
-      }
     }
   }
 
@@ -522,6 +346,18 @@ export default {
         }
       }
     }
+  }
+}
+</style>
+
+<style lang="less">
+.preview-wrapper {
+  height: 350px;
+  overflow: hidden;
+
+  &-content {
+    height: 100%;
+    overflow: auto;
   }
 }
 </style>

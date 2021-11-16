@@ -11,7 +11,8 @@
     "view-design": "^4.7.0-beta.11",
     "vue": "^2.6.11",
     "vue-monaco": "^1.2.2",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^2.24.3",
+    "xlsx": "^0.17.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

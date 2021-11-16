@@ -1,10 +1,10 @@
 <template>
-  <div class="lcd-dragg-tool" :class="{ active: active }" @click.stop="$emit('active')">
+  <div class="lcd-drag-tool" :class="{ active: active }" @click.stop="$emit('active')">
     <template v-if="active">
-      <div class="lcd-dragg-tool-move tool" @click="$emit('move')">
+      <div class="lcd-drag-tool-move tool" @click="$emit('move')">
         <Icon type="md-move" />
       </div>
-      <div class="lcd-dragg-tool-delete tool" @click="$emit('delete')">
+      <div class="lcd-drag-tool-delete tool" @click="$emit('delete')">
         <Icon type="md-trash" />
       </div>
     </template>
@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name: 'DraggTool',
+  name: 'DragTool',
 
   provide: {},
 
@@ -70,7 +70,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.lcd-dragg-tool {
+.lcd-drag-tool {
   position: relative;
   margin: 2px 2px 6px 2px;
   padding: 1px;
