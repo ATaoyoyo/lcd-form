@@ -72,7 +72,7 @@ export default {
 <style lang="less" scoped>
 .lcd-drag-tool {
   position: relative;
-  margin: 2px 2px 6px 2px;
+  margin: 0 2px 6px 2px;
   padding: 1px;
   outline: 1px dashed rgb(40, 95, 212);
   box-sizing: border-box;

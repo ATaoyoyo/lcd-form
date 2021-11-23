@@ -94,6 +94,12 @@ export default {
         }
       }
 
+      console.log(Object.assign(data, {
+        ...schema,
+        schema,
+        configProps: value.props(),
+      }))
+
       return Object.assign(data, {
         ...schema,
         schema,
@@ -119,13 +125,15 @@ export default {
       padding: 0 10px;
 
       .lcd-draggable {
+        display: flex;
+        flex-wrap: wrap;
+
         .draggable-schema {
-          display: flex;
-          align-items: center;
+          width: 33%;
           height: 65px;
-          border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
-          cursor: pointer;
+          text-align: center;
           transition: all 0.3s;
+          cursor: pointer;
 
           &:hover {
             color: #fff;
@@ -133,10 +141,8 @@ export default {
           }
 
           .lcd-draggable-icon {
-            margin: 0 20px 0 50px;
-
             .lcd-icon {
-              font-size: 30px;
+              font-size: 25px;
             }
           }
         }

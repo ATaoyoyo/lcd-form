@@ -13,23 +13,68 @@
           :emptyInsertThreshold="0"
           :list="wrapperForm.schema"
         >
-          <drag-tool
-            v-for="schema in wrapperForm.schema"
-            :key="schema.field"
-            :active="uniqueId === schema.field"
-            @active="$emit('on-choose', schema)"
-            @move="$emit('on-move', schema)"
-            @delete="$emit('on-delete', schema)"
-          >
-            <div class="lcd-form-item">
-              <p class="lcd-form-label" v-if="schema.type !== 'formTable'">
-                <span>{{ schema.title }}</span>
-              </p>
-              <FormItem :prop="schema.prop">
-                <render-component :schema="schema" />
-              </FormItem>
-            </div>
-          </drag-tool>
+          <template v-for="(schema, schemaIndex) in wrapperForm.schema">
+            <template v-if="schema.type === 'row'">
+              <drag-tool
+                :active="schema.field === uniqueId"
+                @active="$emit('on-choose', schema)"
+                @move="$emit('on-move', schema)"
+                @delete="$emit('on-delete', schema)"
+              >
+                <Row v-bind="schema.props" style="padding: 3px">
+                  <Col v-for="(col, colIndex) in schema.columns" :span="col.span">
+                    <draggable
+                      style="min-height: 45px; outline: 1px dashed rgb(40, 95, 212)"
+                      direction="vertical"
+                      ghostClass="ghost"
+                      group="default"
+                      handle=".lcd-drag-tool-move"
+                      :animation="150"
+                      :emptyInsertThreshold="0"
+                      :list="col.list"
+                    >
+                      <drag-tool
+                        v-for="(el, index) in col.list"
+                        style="margin: 0"
+                        :active="el.field === uniqueId"
+                        @active="$emit('on-choose', el)"
+                        @move="$emit('on-move', el)"
+                        @delete="$emit('on-delete', el, schemaIndex, colIndex)"
+                      >
+                        <div class="lcd-form-item" style="min-height: 45px">
+                          <p class="lcd-form-label" v-if="el.type !== 'formTable'">
+                            <span>{{ el.title }}</span>
+                          </p>
+                          <FormItem :prop="el.prop">
+                            <render-component :key="index" :schema="el" />
+                          </FormItem>
+                        </div>
+                      </drag-tool>
+                    </draggable>
+                  </Col>
+                </Row>
+              </drag-tool>
+            </template>
+
+            <template v-else>
+              <drag-tool
+                :key="schema.field"
+                :active="uniqueId === schema.field"
+                @active="$emit('on-choose', schema)"
+                @move="$emit('on-move', schema)"
+                @delete="$emit('on-delete', schema)"
+              >
+                <div class="lcd-form-item">
+                  <p class="lcd-form-label" v-if="schema.type !== 'formTable'">
+                    <span>{{ schema.title }}</span>
+                  </p>
+                  <FormItem :prop="schema.prop">
+                    <render-component :schema="schema" />
+                  </FormItem>
+                </div>
+              </drag-tool>
+            </template>
+          </template>
         </draggable>
       </Form>
     </Row>
@@ -48,7 +93,7 @@ export default {
 
   provide: {},
 
-  components: { draggable, dragTool, RenderComponent, FormTable ,Struct},
+  components: { draggable, dragTool, RenderComponent, FormTable, Struct },
 
   filters: {},
 
@@ -103,8 +148,10 @@ export default {
 <style lang="less" scoped>
 .lcd-drag-wrapper {
   margin: 10px;
+  padding: 2px 0;
   height: calc(100% - 84px);
   background-color: #fff;
+  box-sizing: border-box;
   overflow: auto;
 
   .ivu-row,

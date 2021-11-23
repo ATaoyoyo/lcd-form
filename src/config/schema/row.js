@@ -1,54 +1,62 @@
-const label = "栅格布局";
-const name = "row";
+import { uniqueId } from '@/utils'
+
+const label = '栅格布局'
+const name = 'row'
 
 export default {
-  icon: "icon-row",
+  icon: 'icon-row',
   label,
   name,
+  columns: [
+    { span: 12, list: [] },
+    { span: 12, list: [] },
+  ],
   rule() {
     return {
-      type: "row",
+      type: name,
+      field: uniqueId(),
+      title: label,
       props: {},
-       children: [],
-    };
+      children: [],
+    }
   },
   props() {
     return [
-      { type: "inputNumber", field: "gutter", title: "栅格间隔" },
+      { type: 'inputNumber', field: 'gutter', title: '栅格间隔' },
       {
-        type: "switch",
-        field: "type",
-        title: "flex布局模式",
-        props: { activeValue: "flex", inactiveValue: "default" },
+        type: 'switch',
+        field: 'type',
+        title: 'flex布局模式',
+        props: { activeValue: 'flex', inactiveValue: 'default' },
       },
       {
-        type: "select",
-        field: "justify",
-        title: "flex 布局下的水平排列方式",
+        type: 'select',
+        field: 'justify',
+        title: 'flex 布局下的水平排列方式',
         options: [
-          { label: "start", value: "start" },
-          { label: "end", value: "end" },
+          { label: 'start', value: 'start' },
+          { label: 'end', value: 'end' },
           {
-            label: "center",
-            value: "center",
+            label: 'center',
+            value: 'center',
           },
-          { label: "space-around", value: "space-around" },
-          { label: "space-between", value: "space-between" },
+          { label: 'space-around', value: 'space-around' },
+          { label: 'space-between', value: 'space-between' },
         ],
       },
       {
-        type: "select",
-        field: "align",
-        title: "flex 布局下的垂直排列方式",
+        type: 'select',
+        field: 'align',
+        title: 'flex 布局下的垂直排列方式',
         options: [
-          { label: "top", value: "top" },
-          { label: "middle", value: "middle" },
+          { label: 'top', value: 'top' },
+          { label: 'middle', value: 'middle' },
           {
-            label: "bottom",
-            value: "bottom",
+            label: 'bottom',
+            value: 'bottom',
           },
         ],
       },
-    ];
+    ]
   },
-};
+}

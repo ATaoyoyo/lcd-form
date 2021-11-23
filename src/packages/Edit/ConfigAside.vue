@@ -6,7 +6,7 @@
 
     <template v-if="activeSchema">
       <Divider>基础配置</Divider>
-      <Form label-position="top">
+      <Form>
         <FormItem
           v-for="(prop, index) in baseForm.schema"
           :key="index"
@@ -136,6 +136,10 @@ export default {
 
     font-size: 18px;
     color: #999;
+  }
+
+  /deep/ .ivu-form .ivu-form-item-label {
+    text-align: left;
   }
 }
 </style>

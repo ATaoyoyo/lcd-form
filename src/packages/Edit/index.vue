@@ -153,8 +153,16 @@ export default {
       this.makeSchemaRule(schema)
     },
 
-    onDelete(schema) {
-      const index = this.wrapperForm.schema.findIndex(({ field }) => field === schema.field)
+    onDelete(schema, schemaIndex, columnIndex) {
+      const { wrapperForm } = this
+
+      // 删除 row 中的组件
+      if (schemaIndex >= 0) {
+        this.wrapperForm.schema[schemaIndex].columns[columnIndex].list = []
+        return
+      }
+
+      const index = wrapperForm.schema.findIndex(({ field }) => field === schema.field)
       this.wrapperForm.schema.splice(index, 1)
       this.baseForm = {}
       this.propForm = {}
@@ -350,7 +358,7 @@ export default {
 }
 </style>
 
-<style lang="less">
+<style lang="less" scoped>
 .preview-wrapper {
   height: 350px;
   overflow: hidden;
