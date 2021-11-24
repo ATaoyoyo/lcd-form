@@ -94,12 +94,6 @@ export default {
         }
       }
 
-      console.log(Object.assign(data, {
-        ...schema,
-        schema,
-        configProps: value.props(),
-      }))
-
       return Object.assign(data, {
         ...schema,
         schema,

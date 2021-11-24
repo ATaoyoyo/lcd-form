@@ -34,19 +34,20 @@
                       :list="col.list"
                     >
                       <drag-tool
-                        v-for="(el, index) in col.list"
+                        v-for="(el, elIndex) in col.list"
                         style="margin: 0"
                         :active="el.field === uniqueId"
+                        :key="el.field"
                         @active="$emit('on-choose', el)"
                         @move="$emit('on-move', el)"
-                        @delete="$emit('on-delete', el, schemaIndex, colIndex)"
+                        @delete="$emit('on-delete', el, schemaIndex, colIndex, elIndex)"
                       >
                         <div class="lcd-form-item" style="min-height: 45px">
                           <p class="lcd-form-label" v-if="el.type !== 'formTable'">
                             <span>{{ el.title }}</span>
                           </p>
                           <FormItem :prop="el.prop">
-                            <render-component :key="index" :schema="el" />
+                            <render-component :schema="el" />
                           </FormItem>
                         </div>
                       </drag-tool>

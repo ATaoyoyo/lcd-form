@@ -153,12 +153,13 @@ export default {
       this.makeSchemaRule(schema)
     },
 
-    onDelete(schema, schemaIndex, columnIndex) {
+    onDelete(schema, schemaIndex, columnIndex, elIndex) {
       const { wrapperForm } = this
 
       // 删除 row 中的组件
       if (schemaIndex >= 0) {
-        this.wrapperForm.schema[schemaIndex].columns[columnIndex].list = []
+        this.wrapperForm.schema[schemaIndex].columns[columnIndex].list.splice(elIndex, 1)
+
         return
       }
 
