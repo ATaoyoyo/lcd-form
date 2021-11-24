@@ -1,3 +1,5 @@
+import { uniqueId } from '@/utils'
+
 const name = "col";
 
 export default {
@@ -7,6 +9,7 @@ export default {
   inside: true,
   rule() {
     return {
+      field: uniqueId(),
       type: name,
       props: { span: 12 },
       children: [],

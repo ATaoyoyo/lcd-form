@@ -24,12 +24,25 @@ export default {
     }
   },
   props() {
+    const jsonValue = JSON.stringify(this.rule().options, null, 2)
+
     return [
+      {
+        type: 'struct',
+        field: 'options',
+        title: '选项数据',
+        props: { title: '编辑数据', jsonValue },
+      },
+      {
+        type: 'switch',
+        field: 'border',
+        title: '显示边框',
+      },
       {
         type: 'switch',
         field: 'type',
-        title: '按钮类型',
-        props: { activeValue: 'button', inactiveValue: 'default' },
+        title: '按钮形式',
+        props: { trueValue: 'button', falseValue: 'default' },
       },
       { type: 'switch', field: 'disabled', title: '是否禁用' },
       {

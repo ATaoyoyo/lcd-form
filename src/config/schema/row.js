@@ -22,26 +22,29 @@ export default {
   },
   props() {
     return [
-      { type: 'inputNumber', field: 'gutter', title: '栅格间隔' },
+      {
+        type: 'inputNumber',
+        field: 'gutter',
+        title: '栅格间隔',
+        value: 0,
+        props: { min: 0 },
+      },
       {
         type: 'switch',
         field: 'type',
         title: 'flex布局模式',
-        props: { activeValue: 'flex', inactiveValue: 'default' },
+        props: { trueValue: 'flex', falseValue: 'default' },
       },
       {
         type: 'select',
         field: 'justify',
         title: 'flex 布局下的水平排列方式',
         options: [
-          { label: 'start', value: 'start' },
-          { label: 'end', value: 'end' },
-          {
-            label: 'center',
-            value: 'center',
-          },
-          { label: 'space-around', value: 'space-around' },
-          { label: 'space-between', value: 'space-between' },
+          { label: '开始（start）', value: 'start' },
+          { label: '结束（end）', value: 'end' },
+          { label: '居中（center）', value: 'center' },
+          { label: '环绕（space-around）', value: 'space-around' },
+          { label: '两端对齐（space-between）', value: 'space-between' },
         ],
       },
       {
@@ -49,12 +52,9 @@ export default {
         field: 'align',
         title: 'flex 布局下的垂直排列方式',
         options: [
-          { label: 'top', value: 'top' },
-          { label: 'middle', value: 'middle' },
-          {
-            label: 'bottom',
-            value: 'bottom',
-          },
+          { label: '顶端对齐（top）', value: 'top' },
+          { label: '居中对齐（middle）', value: 'middle' },
+          { label: '底端对齐（bottom）', value: 'bottom' },
         ],
       },
     ]

@@ -20,39 +20,51 @@
                 @active="$emit('on-choose', schema)"
                 @move="$emit('on-move', schema)"
                 @delete="$emit('on-delete', schema)"
+                @copy="$emit('on-copy', schema)"
               >
-                <Row v-bind="schema.props" style="padding: 3px">
-                  <Col v-for="(col, colIndex) in schema.columns" :span="col.span">
-                    <draggable
-                      style="min-height: 45px; outline: 1px dashed rgb(40, 95, 212)"
-                      direction="vertical"
-                      ghostClass="ghost"
-                      group="default"
-                      handle=".lcd-drag-tool-move"
-                      :animation="150"
-                      :emptyInsertThreshold="0"
-                      :list="col.list"
-                    >
+                <Row v-bind="schema.props" style="padding: 6px">
+                  <template v-for="(col, colIndex) in schema.columns">
+                    <Col v-bind="col.props" :key="col.field">
                       <drag-tool
-                        v-for="(el, elIndex) in col.list"
-                        style="margin: 0"
-                        :active="el.field === uniqueId"
-                        :key="el.field"
-                        @active="$emit('on-choose', el)"
-                        @move="$emit('on-move', el)"
-                        @delete="$emit('on-delete', el, schemaIndex, colIndex, elIndex)"
+                        :active="col.field === uniqueId"
+                        style="margin: 0; padding: 6px"
+                        @active="$emit('on-choose', col)"
+                        @delete="$emit('on-delete', col, schemaIndex, colIndex)"
+                        @copy="$emit('on-copy', col, schemaIndex, colIndex)"
                       >
-                        <div class="lcd-form-item" style="min-height: 45px">
-                          <p class="lcd-form-label" v-if="el.type !== 'formTable'">
-                            <span>{{ el.title }}</span>
-                          </p>
-                          <FormItem :prop="el.prop">
-                            <render-component :schema="el" />
-                          </FormItem>
-                        </div>
+                        <draggable
+                          style="min-height: 45px"
+                          direction="vertical"
+                          ghostClass="ghost"
+                          group="default"
+                          handle=".lcd-drag-tool-move"
+                          :animation="150"
+                          :emptyInsertThreshold="0"
+                          :list="col.children"
+                        >
+                          <drag-tool
+                            v-for="(el, elIndex) in col.children"
+                            style="margin: 0"
+                            :active="el.field === uniqueId"
+                            :key="el.field"
+                            @active="$emit('on-choose', el)"
+                            @move="$emit('on-move', el)"
+                            @delete="$emit('on-delete', el, schemaIndex, colIndex, elIndex)"
+                            @copy="$emit('on-copy', el, schemaIndex, colIndex, elIndex)"
+                          >
+                            <div class="lcd-form-item" style="min-height: 45px">
+                              <p class="lcd-form-label" v-if="el.type !== 'formTable'">
+                                <span>{{ el.title }}</span>
+                              </p>
+                              <FormItem :prop="el.prop">
+                                <render-component :schema="el" />
+                              </FormItem>
+                            </div>
+                          </drag-tool>
+                        </draggable>
                       </drag-tool>
-                    </draggable>
-                  </Col>
+                    </Col>
+                  </template>
                 </Row>
               </drag-tool>
             </template>
@@ -64,6 +76,7 @@
                 @active="$emit('on-choose', schema)"
                 @move="$emit('on-move', schema)"
                 @delete="$emit('on-delete', schema)"
+                @copy="$emit('on-copy', schema)"
               >
                 <div class="lcd-form-item">
                   <p class="lcd-form-label" v-if="schema.type !== 'formTable'">

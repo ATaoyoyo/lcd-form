@@ -27,6 +27,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import col from '@/config/schema/col'
 
 export default {
   name: 'MenuAside',
@@ -92,6 +93,12 @@ export default {
           field: schema.field,
           columns: schema.props.columns,
         }
+      }
+
+      if (schema.type === 'row') {
+        const schema = col.rule()
+
+        data.columns = [{ ...schema, schema, configProps: col.props() }]
       }
 
       return Object.assign(data, {

@@ -4,6 +4,9 @@
       <div class="lcd-drag-tool-move tool" @click="$emit('move')">
         <Icon type="md-move" />
       </div>
+      <div class="lcd-drag-tool-copy tool" @click="$emit('copy')">
+        <Icon type="md-albums" />
+      </div>
       <div class="lcd-drag-tool-delete tool" @click="$emit('delete')">
         <Icon type="md-trash" />
       </div>
@@ -100,6 +103,11 @@ export default {
     &:hover {
       cursor: move;
     }
+  }
+
+  &-copy {
+    right: 20px;
+    bottom: 0;
   }
 
   &-delete {

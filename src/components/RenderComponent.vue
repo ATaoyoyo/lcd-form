@@ -4,12 +4,12 @@ import { upper } from '@/utils'
 const typeKeyMap = {
   radio: 'RadioGroup',
   switch: 'i-switch',
-  checkbox: 'CheckboxGroup'
+  checkbox: 'CheckboxGroup',
 }
 
-const renderChildren = (h, data, type) => {
+const renderChildren = (h, data, props, type) => {
   return data.map((item) => {
-    return h(type, { props: { value: item.value, label: item.label } }, item.label)
+    return h(type, { props: { ...props, value: item.value, label: item.label } }, item.label)
   })
 }
 
@@ -41,11 +41,11 @@ export default {
       },
       [
         schema.type === 'select'
-          ? renderChildren(h, schema.options, 'Option')
+          ? renderChildren(h, schema.options, schema.props, 'Option')
           : schema.type === 'radio'
-          ? renderChildren(h, schema.options, 'Radio')
+          ? renderChildren(h, schema.options, schema.props, 'Radio')
           : schema.type === 'checkbox'
-          ? renderChildren(h, schema.options, 'Checkbox')
+          ? renderChildren(h, schema.options, schema.props, 'Checkbox')
           : null,
       ]
     )

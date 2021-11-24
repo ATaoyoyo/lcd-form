@@ -1,8 +1,7 @@
-import { uniqueId } from '../../utils'
+import { uniqueId } from '@/utils'
 
 const label = '计数器'
 const name = 'inputNumber'
-const cpnName = 'InputNumber'
 
 export default {
   icon: 'icon-number',
@@ -11,7 +10,6 @@ export default {
   rule() {
     return {
       type: name,
-      cpnName: cpnName,
       field: uniqueId(),
       title: label,
       info: '',
@@ -41,6 +39,7 @@ export default {
         value: true,
       },
       { type: 'input', field: 'placeholder', title: '占位符' },
+      { type: 'switch', field: 'controls-outside', title: '按钮形式' },
     ]
   },
 }

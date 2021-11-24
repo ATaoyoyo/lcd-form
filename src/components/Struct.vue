@@ -1,12 +1,12 @@
 <template>
   <div class="lcd-struct">
-    <Button type="dashed" @click="visiable = true" long>
+    <Button type="dashed" @click="visible = true" long>
       {{ title }}
     </Button>
-    <Modal v-model="visiable" title="编辑数据" @on-ok="onOk" width="45%">
+    <Modal v-model="visible" title="编辑数据" @on-ok="onOk" width="45%">
       <MonacoEditor
         style="height: 400px"
-        v-if="visiable"
+        v-if="visible"
         v-model="value"
         language="json"
         theme="vs-dark"
@@ -35,7 +35,7 @@ export default {
   // 定义属性
   data() {
     return {
-      visiable: false,
+      visible: false,
       value: this.jsonValue,
     }
   },

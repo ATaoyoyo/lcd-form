@@ -21,6 +21,7 @@
           :wrapper-form="wrapperForm"
           @on-choose="onChoose"
           @on-delete="onDelete"
+          @on-copy="onCopy"
         />
       </template>
 
@@ -71,9 +72,11 @@ import DragWrapper from '@/packages/Edit/DragWrapper'
 import ConfigAside from '@/packages/Edit/ConfigAside'
 
 import schema from '@/config/schema'
+import { uniqueId } from '@/utils'
 import { typeKeyMap, valueKeyMap } from '@/config/keyMap'
 
 import MonacoEditor from 'vue-monaco'
+import cloneDeep from 'clone-deep'
 
 export default {
   name: 'Edit',
@@ -153,12 +156,60 @@ export default {
       this.makeSchemaRule(schema)
     },
 
-    onDelete(schema, schemaIndex, columnIndex, elIndex) {
+    onCopy(schema, schemaIndex, colIndex, elIndex = -1) {
+      const { wrapperForm } = this
+      const index = wrapperForm.schema.findIndex(({ field }) => field === schema.field)
+
+      if (index !== -1) {
+        const cloneSchema = cloneDeep(schema)
+
+        if (cloneSchema.type === 'row') {
+          cloneSchema.columns.forEach((item) => {
+            item.field = uniqueId()
+            item.children.forEach((child) => (child.field = uniqueId()))
+          })
+        }
+
+        cloneSchema.field = uniqueId()
+        this.wrapperForm.schema.splice(index + 1, 0, cloneSchema)
+
+        return
+      }
+
+      if (schema.type === 'col' && elIndex === -1) {
+        const cloneCol = cloneDeep(schema)
+        cloneCol.field = uniqueId()
+        cloneCol.children.forEach((item) => (item.field = uniqueId()))
+        this.wrapperForm.schema[schemaIndex].columns.splice(colIndex + 1, 0, cloneCol)
+
+        return
+      }
+
+      // col 中的组件复制
+      if (colIndex >= 0) {
+        const cloneEl = cloneDeep(schema)
+        cloneEl.field = uniqueId()
+        this.wrapperForm.schema[schemaIndex].columns[colIndex].children.splice(
+          elIndex + 1,
+          0,
+          cloneEl
+        )
+      }
+    },
+
+    onDelete(schema, schemaIndex, columnIndex, elIndex = -1) {
       const { wrapperForm } = this
 
-      // 删除 row 中的组件
-      if (schemaIndex >= 0) {
-        this.wrapperForm.schema[schemaIndex].columns[columnIndex].list.splice(elIndex, 1)
+      // 删除 col
+      if (schema.type === 'col' && elIndex === -1) {
+        this.wrapperForm.schema[schemaIndex].columns.splice(columnIndex, 1)
+
+        return
+      }
+
+      // 删除 col 中的组件
+      if (elIndex >= 0) {
+        this.wrapperForm.schema[schemaIndex].columns[columnIndex].children.splice(elIndex, 1)
 
         return
       }
