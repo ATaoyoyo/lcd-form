@@ -40,6 +40,13 @@ export default {
         title: '按钮形式',
         props: { trueValue: 'button', falseValue: 'default' },
       },
+      {
+        type: 'switch',
+        field: 'button-style',
+        title: '按钮实色',
+        props: { trueValue: 'solid', falseValue: 'default' },
+      },
+      { type: 'switch', field: 'vertical', title: '垂直排列（按钮状态下无效）' },
       { type: 'switch', field: 'disabled', title: '是否禁用' },
     ]
   },

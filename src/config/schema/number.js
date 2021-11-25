@@ -30,7 +30,7 @@ export default {
         title: '设置计数器允许的最大值',
         value: null,
       },
-
+      { type: 'inputNumber', field: 'step', title: '改变精读数', value: null },
       { type: 'switch', field: 'disabled', title: '是否禁用计数器' },
       {
         type: 'switch',
@@ -40,6 +40,7 @@ export default {
       },
       { type: 'input', field: 'placeholder', title: '占位符' },
       { type: 'switch', field: 'controls-outside', title: '按钮形式' },
+      { type: 'switch', field: 'readonly', title: '只读' },
     ]
   },
 }

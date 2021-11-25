@@ -33,38 +33,8 @@ export default {
         title: '选项数据',
         props: { title: '编辑数据', jsonValue },
       },
-      {
-        type: 'switch',
-        field: 'border',
-        title: '显示边框',
-      },
-      {
-        type: 'switch',
-        field: 'type',
-        title: '按钮形式',
-        props: { trueValue: 'button', falseValue: 'default' },
-      },
+      { type: 'switch', field: 'border', title: '显示边框' },
       { type: 'switch', field: 'disabled', title: '是否禁用' },
-      {
-        type: 'inputNumber',
-        field: 'min',
-        title: '可被勾选的 checkbox 的最小数量',
-      },
-      {
-        type: 'inputNumber',
-        field: 'max',
-        title: '可被勾选的 checkbox 的最大数量',
-      },
-      {
-        type: 'input',
-        field: 'textColor',
-        title: '按钮形式的 Checkbox 激活时的文本颜色',
-      },
-      {
-        type: 'input',
-        field: 'fill',
-        title: '按钮形式的 Checkbox 激活时的填充色和边框色',
-      },
     ]
   },
 }
