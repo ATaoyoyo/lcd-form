@@ -21,6 +21,7 @@
                 @move="$emit('on-move', schema)"
                 @delete="$emit('on-delete', schema)"
                 @copy="$emit('on-copy', schema)"
+                @link="$emit('on-link', schema, schemaIndex)"
               >
                 <Row v-bind="schema.props" style="padding: 6px">
                   <template v-for="(col, colIndex) in schema.columns">
@@ -106,6 +107,8 @@ export default {
   name: 'DragWrapper',
 
   provide: {},
+
+  inject: ['schema'],
 
   components: { draggable, dragTool, RenderComponent, FormTable, Struct },
 

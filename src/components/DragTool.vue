@@ -7,6 +7,13 @@
       <div class="lcd-drag-tool-copy tool" @click="$emit('copy')">
         <Icon type="md-albums" />
       </div>
+      <div
+        class="lcd-drag-tool-link tool"
+        v-if="schema.active && schema.active.type === 'row'"
+        @click="$emit('link')"
+      >
+        <Icon type="md-link" />
+      </div>
       <div class="lcd-drag-tool-delete tool" @click="$emit('delete')">
         <Icon type="md-trash" />
       </div>
@@ -20,6 +27,8 @@ export default {
   name: 'DragTool',
 
   provide: {},
+
+  inject: ['schema'],
 
   components: {},
 
@@ -92,6 +101,8 @@ export default {
     text-align: center;
     color: #fff;
     background-color: rgb(40, 95, 212);
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
     cursor: pointer;
     z-index: 99;
   }
@@ -107,6 +118,11 @@ export default {
 
   &-copy {
     right: 20px;
+    bottom: 0;
+  }
+
+  &-link {
+    right: 40px;
     bottom: 0;
   }
 

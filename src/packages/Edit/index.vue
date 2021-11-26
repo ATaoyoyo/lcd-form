@@ -22,6 +22,7 @@
           @on-choose="onChoose"
           @on-delete="onDelete"
           @on-copy="onCopy"
+          @on-link="onLink"
         />
       </template>
 
@@ -77,11 +78,18 @@ import { typeKeyMap, valueKeyMap } from '@/config/keyMap'
 
 import MonacoEditor from 'vue-monaco'
 import cloneDeep from 'clone-deep'
+import col from '@/config/schema/col'
 
 export default {
   name: 'Edit',
 
-  provide: {},
+  provide() {
+    return {
+      schema: {
+        active: this.activeSchema,
+      },
+    }
+  },
 
   components: {
     ConfigAside,
@@ -155,6 +163,12 @@ export default {
     onChoose(schema) {
       this.uniqueId = schema.field
       this.makeSchemaRule(schema)
+      this._provided.schema.active = schema
+    },
+
+    onLink(schema, schemaIndex) {
+      const colSchema = { ...col.rule(), schema: col.rule(), configProps: col.props() }
+      this.wrapperForm.schema[schemaIndex].columns.push(colSchema)
     },
 
     onCopy(schema, schemaIndex, colIndex, elIndex = -1) {
