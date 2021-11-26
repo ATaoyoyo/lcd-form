@@ -96,7 +96,9 @@ export default {
 
   filters: {},
 
-  props: {},
+  props: {
+    menus: { type: Array, default: () => schema },
+  },
 
   model: {},
 
@@ -104,7 +106,6 @@ export default {
   data() {
     return {
       uniqueId: null,
-      menus: schema,
       wrapperForm: { model: {}, schema: [] },
       baseForm: {},
       propForm: {},

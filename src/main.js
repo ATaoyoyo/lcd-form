@@ -7,7 +7,10 @@ import 'view-design/dist/styles/iview.css'
 import 'normalize.css/normalize.css'
 import './style/index.css'
 
+import Edit from '@/packages/Edit'
+
 Vue.use(ViewUI)
+Vue.use(Edit)
 
 Vue.config.productionTip = false
 

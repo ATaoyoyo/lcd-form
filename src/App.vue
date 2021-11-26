@@ -5,14 +5,12 @@
 </template>
 
 <script>
-import Edit from './packages/Edit'
-
 export default {
   name: 'App',
 
   provide: {},
 
-  components: { Edit },
+  components: {},
 
   filters: {},
 
